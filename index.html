@@ -56,6 +56,7 @@ body{
   cursor:pointer;
 }
 .status-right{display:flex;gap:8px;align-items:center}
+  <span id="chargingIcon" style="display: none;">⚡</span>
 
 /* Desain Ikon Baterai */
 .battery-icon {
@@ -299,9 +300,18 @@ function initBattery() {
         const level = Math.round(battery.level * 100);
         document.getElementById('statusText').textContent = `${level}%`;
         document.getElementById('batteryLevel').style.width = `${level}%`;
-        <span id="chargingIcon" style="display: none;">⚡</span>
+
+        // --- INI BAGIAN LOGIKA PETIRNYA ---
+        const lightning = document.getElementById('chargingIcon');
+        if (battery.charging) {
+          lightning.style.display = 'inline'; // Munculkan petir kalau lagi ngecharge
+        } else {
+          lightning.style.display = 'none';  // Sembunyikan kalau tidak ngecharge
+        }
       }
+      
       updateBattery();
+      // Pasang "mata-mata" (event listener) buat deteksi perubahan status baterai
       battery.addEventListener('levelchange', updateBattery);
       battery.addEventListener('chargingchange', updateBattery);
     });
@@ -311,7 +321,6 @@ function initBattery() {
   }
 }
 initBattery();
-
 // Modal Handlers standar
 function openModal(title, desc) {
   document.getElementById('modalTitle').textContent = title;
