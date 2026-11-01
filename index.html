@@ -213,7 +213,33 @@ main{
     <p id="modalDesc" style="color:var(--muted);font-size:14px">Detail aplikasi Astro OS.</p>
   </div>
 </div>
-
+/* Desain Ikon Baterai */
+.battery-icon {
+  width: 22px;
+  height: 11px;
+  border: 1.5px solid var(--text);
+  border-radius: 3px;
+  padding: 1.5px;
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+}
+.battery-icon::after {
+  content: '';
+  position: absolute;
+  right: -3.5px;
+  top: 2.5px;
+  width: 2px;
+  height: 4px;
+  background: var(--text);
+  border-radius: 0 1px 1px 0;
+}
+.battery-level {
+  height: 100%;
+  background: var(--text);
+  border-radius: 1px;
+  width: 100%; /* Bakal berubah otomatis ngikutin persentase */
+}
 <script>
 // Data Aplikasi
 const apps = [
