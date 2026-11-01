@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Astra OS UI v0.2</title>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#eef1f6;
+  --panel:rgba(255,255,255,.75);
+  --solid:#fff;
+  --text:#171a22;
+  --muted:#737987;
+  --line:rgba(20,25,35,.09);
+  --accent:#4d78df;
+  --shadow:0 12px 35px rgba(35,45,70,.12);
+}
+:root.dark{
+  color-scheme:dark;
+  --bg:#0f1218;
+  --panel:rgba(25,30,42,.78);
+  --solid:#1d222e;
+  --text:#f3f5fa;
+  --muted:#9fa7b8;
+  --line:rgba(255,255,255,.09);
+  --accent:#8aa9ff;
+  --shadow:0 12px 35px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  user-select:none;
+}
+
+/* Status Bar Top */
+.topbar{
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+  font-size:12px;
+  font-weight:600;
+  color:var(--text);
+  backdrop-filter:blur(10px);
+  z-index:10;
+}
+.status-right{display:flex;gap:10px;align-items:center}
+
+/* Main Screen */
+main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  padding:20px 20px 90px;
+  overflow-y:auto;
+}
+.clock-widget{
+  margin:10px 0 25px;
+  text-align:left;
+}
+.clock{
+  font-size:56px;
+  font-weight:700;
+  letter-spacing:-2px;
+  line-height:1;
+}
+.date{
+  font-size:15px;
+  color:var(--muted);
+  margin-top:6px;
+  font-weight:500;
+}
+
+/* App Grid Mobile */
+.apps-grid{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:20px 12px;
+  margin-top:15px;
+}
+.app-item{
+  border:0;
+  background:transparent;
+  color:var(--text);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  cursor:pointer;
+  font:inherit;
+  font-size:11px;
+}
+.icon-box{
+  width:56px;
+  height:56px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  font-size:24px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(10px);
+  transition:transform .1s;
+}
+.app-item:active .icon-box{transform:scale(0.92)}
+
+/* Mobile Bottom Dock */
+.dock-container{
+  position:fixed;
+  bottom:15px;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:center;
+  z-index:10;
+  padding:0 20px;
+}
+.dock{
+  display:flex;
+  gap:16px;
+  padding:10px 18px;
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:var(--panel);
+  backdrop-filter:blur(20px);
+  box-shadow:var(--shadow);
+}
+.dock .icon-box{
+  width:48px;
+  height:48px;
+  border-radius:15px;
+  font-size:22px;
+  box-shadow:none;
+}
+
+/* Simple Control Overlay */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.3);
+  backdrop-filter:blur(4px);
+  z-index:20;
+  display:none;
+  align-items:flex-end;
+}
+.overlay.show{display:flex}
+.sheet{
+  width:100%;
+  background:var(--solid);
+  border-top-left-radius:25px;
+  border-top-right-radius:25px;
+  padding:20px;
+  box-shadow:var(--shadow);
+}
+.sheet-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+.close-btn{
+  border:0;
+  background:var(--bg);
+  color:var(--text);
+  border-radius:50%;
+  width:30px;
+  height:30px;
+  font-size:16px;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div id="statusClock">00:00</div>
+  <div class="status-right">
+    <span id="statusBattery">⚡ --%</span>
+  </div>
+</header>
+
+<main>
+  <div class="clock-widget">
+    <div class="clock" id="mainClock">00:00</div>
+    <div class="date" id="mainDate">Memuat tanggal...</div>
+  </div>
+
+  <div class="apps-grid" id="appsGrid"></div>
+</main>
+
+<div class="dock-container">
+  <div class="dock" id="dockGrid"></div>
+</div>
+
+<div class="overlay" id="appModal" onclick="if(event.target===this)closeModal()">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h3 id="modalTitle" style="margin:0">Aplikasi</h3>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <p id="modalDesc" style="color:var(--muted);font-size:14px">Detail aplikasi Astra OS.</p>
+  </div>
+</div>
+
+<script>
+const apps = [
+  ['⚙️', 'Pengaturan', 'Pengaturan sistem Astra OS.'],
+  ['🗂️', 'Berkas', 'Manajer file lokal.'],
+  ['🖼️', 'Galeri', 'Koleksi foto dan gambar.'],
+  ['🎵', 'Musik', 'Pemutar musik digital.'],
+  ['🧮', 'Kalkulator', 'Kalkulator bawaan.'],
+  ['📝', 'Catatan', 'Catatan cepat.'],
+  ['📅', 'Kalender', 'Jadwal dan agenda.'],
+  ['🌐', 'Browser', 'Peramban web.']
+];
+
+// Render Apps
+const appsGrid = document.getElementById('appsGrid');
+const dockGrid = document.getElementById('dockGrid');
+
+apps.forEach(app => {
+  const btn = document.createElement('button');
+  btn.className = 'app-item';
+  btn.onclick = () => openModal(app[1], app[2]);
+  btn.innerHTML = `<div class="icon-box">${app[0]}</div><span>${app[1]}</span>`;
+  appsGrid.appendChild(btn);
+});
+
+apps.slice(0, 4).forEach(app => {
+  const btn = document.createElement('button');
+  btn.className = 'app-item';
+  btn.onclick = () => openModal(app[1], app[2]);
+  btn.innerHTML = `<div class="icon-box">${app[0]}</div>`;
+  dockGrid.appendChild(btn);
+});
+
+// Update Waktu & Tanggal Berdasarkan Lokasi Perangkat
+function updateDateTime() {
+  const now = new Date();
+  
+  // Waktu
+  const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
+  document.getElementById('mainClock').textContent = timeStr;
+  document.getElementById('statusClock').textContent = timeStr;
+  
+  // Tanggal
+  const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+  document.getElementById('mainDate').textContent = now.toLocaleDateString('id-ID', dateOptions);
+}
+updateDateTime();
+setInterval(updateDateTime, 1000);
+
+// Status Baterai Real-time (Battery Status API)
+function initBattery() {
+  if ('getBattery' in navigator) {
+    navigator.getBattery().then(battery => {
+      function updateBattery() {
+        const level = Math.round(battery.level * 100);
+        const charging = battery.charging ? '⚡ ' : '';
+        document.getElementById('statusBattery').textContent = `${charging}${level}%`;
+      }
+      updateBattery();
+      battery.addEventListener('levelchange', updateBattery);
+      battery.addEventListener('chargingchange', updateBattery);
+    });
+  } else {
+    document.getElementById('statusBattery').textContent = '🔋 100%';
+  }
+}
+initBattery();
+
+// Modal Handlers
+function openModal(title, desc) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalDesc').textContent = desc;
+  document.getElementById('appModal').classList.add('show');
+}
+function closeModal() {
+  document.getElementById('appModal').classList.remove('show');
+}
+</script>
+</body>
+</html>
