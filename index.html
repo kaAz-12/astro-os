@@ -55,7 +55,15 @@ body{
   z-index:10;
   cursor:pointer;
 }
-.status-right{display:flex;gap:10px;align-items:center}
+<header class="topbar" onclick="openControlCenter()">
+  <div id="statusClock">00:00</div>
+  <div class="status-right">
+    <span id="statusText">--%</span>
+    <div class="battery-icon">
+      <div class="battery-level" id="batteryLevel"></div>
+    </div>
+  </div>
+</header>
 
 /* Main Screen */
 main{
@@ -180,6 +188,33 @@ main{
   font-size:16px;
   cursor:pointer;
 }
+  /* Desain Ikon Baterai */
+.battery-icon {
+  width: 22px;
+  height: 11px;
+  border: 1.5px solid var(--text);
+  border-radius: 3px;
+  padding: 1.5px;
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+}
+.battery-icon::after {
+  content: '';
+  position: absolute;
+  right: -3.5px;
+  top: 2.5px;
+  width: 2px;
+  height: 4px;
+  background: var(--text);
+  border-radius: 0 1px 1px 0;
+}
+.battery-level {
+  height: 100%;
+  background: var(--text);
+  border-radius: 1px;
+  width: 100%; /* Bakal berubah otomatis ngikutin persentase */
+}
 </style>
 </head>
 <body>
@@ -286,21 +321,23 @@ function updateDateTime() {
 updateDateTime();
 setInterval(updateDateTime, 1000);
 
-// Status Baterai Real-time
+// Status Baterai Real-time dengan Ikon Kotak
 function initBattery() {
   if ('getBattery' in navigator) {
     navigator.getBattery().then(battery => {
       function updateBattery() {
         const level = Math.round(battery.level * 100);
-        const charging = battery.charging ? '⚡ ' : '';
-        document.getElementById('statusBattery').textContent = `${charging}${level}%`;
+        document.getElementById('statusText').textContent = `${level}%`;
+        // Mengatur panjang isi baterai di dalam ikon
+        document.getElementById('batteryLevel').style.width = `${level}%`;
       }
       updateBattery();
       battery.addEventListener('levelchange', updateBattery);
       battery.addEventListener('chargingchange', updateBattery);
     });
   } else {
-    document.getElementById('statusBattery').textContent = '🔋 100%';
+    document.getElementById('statusText').textContent = '100%';
+    document.getElementById('batteryLevel').style.width = '100%';
   }
 }
 initBattery();
