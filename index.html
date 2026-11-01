@@ -55,15 +55,35 @@ body{
   z-index:10;
   cursor:pointer;
 }
-<header class="topbar" onclick="openControlCenter()">
-  <div id="statusClock">00:00</div>
-  <div class="status-right">
-    <span id="statusText">--%</span>
-    <div class="battery-icon">
-      <div class="battery-level" id="batteryLevel"></div>
-    </div>
-  </div>
-</header>
+.status-right{display:flex;gap:8px;align-items:center}
+
+/* Desain Ikon Baterai */
+.battery-icon {
+  width: 22px;
+  height: 11px;
+  border: 1.5px solid var(--text);
+  border-radius: 3px;
+  padding: 1.5px;
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+}
+.battery-icon::after {
+  content: '';
+  position: absolute;
+  right: -3.5px;
+  top: 2.5px;
+  width: 2px;
+  height: 4px;
+  background: var(--text);
+  border-radius: 0 1px 1px 0;
+}
+.battery-level {
+  height: 100%;
+  background: var(--text);
+  border-radius: 1px;
+  width: 100%;
+}
 
 /* Main Screen */
 main{
@@ -188,33 +208,6 @@ main{
   font-size:16px;
   cursor:pointer;
 }
-  /* Desain Ikon Baterai */
-.battery-icon {
-  width: 22px;
-  height: 11px;
-  border: 1.5px solid var(--text);
-  border-radius: 3px;
-  padding: 1.5px;
-  display: inline-flex;
-  position: relative;
-  align-items: center;
-}
-.battery-icon::after {
-  content: '';
-  position: absolute;
-  right: -3.5px;
-  top: 2.5px;
-  width: 2px;
-  height: 4px;
-  background: var(--text);
-  border-radius: 0 1px 1px 0;
-}
-.battery-level {
-  height: 100%;
-  background: var(--text);
-  border-radius: 1px;
-  width: 100%; /* Bakal berubah otomatis ngikutin persentase */
-}
 </style>
 </head>
 <body>
@@ -222,7 +215,10 @@ main{
 <header class="topbar" onclick="openControlCenter()">
   <div id="statusClock">00:00</div>
   <div class="status-right">
-    <span id="statusBattery">⚡ --%</span>
+    <span id="statusText">--%</span>
+    <div class="battery-icon">
+      <div class="battery-level" id="batteryLevel"></div>
+    </div>
   </div>
 </header>
 
@@ -248,33 +244,7 @@ main{
     <p id="modalDesc" style="color:var(--muted);font-size:14px">Detail aplikasi Astro OS.</p>
   </div>
 </div>
-/* Desain Ikon Baterai */
-.battery-icon {
-  width: 22px;
-  height: 11px;
-  border: 1.5px solid var(--text);
-  border-radius: 3px;
-  padding: 1.5px;
-  display: inline-flex;
-  position: relative;
-  align-items: center;
-}
-.battery-icon::after {
-  content: '';
-  position: absolute;
-  right: -3.5px;
-  top: 2.5px;
-  width: 2px;
-  height: 4px;
-  background: var(--text);
-  border-radius: 0 1px 1px 0;
-}
-.battery-level {
-  height: 100%;
-  background: var(--text);
-  border-radius: 1px;
-  width: 100%; /* Bakal berubah otomatis ngikutin persentase */
-}
+
 <script>
 // Data Aplikasi
 const apps = [
@@ -328,7 +298,6 @@ function initBattery() {
       function updateBattery() {
         const level = Math.round(battery.level * 100);
         document.getElementById('statusText').textContent = `${level}%`;
-        // Mengatur panjang isi baterai di dalam ikon
         document.getElementById('batteryLevel').style.width = `${level}%`;
       }
       updateBattery();
@@ -353,7 +322,7 @@ function closeModal() {
   document.getElementById('appModal').classList.remove('show');
 }
 
-// Fitur Sementara untuk Control Center (Nanti kita kembangkan bareng!)
+// Control Center (Sementara)
 function openControlCenter() {
   openModal('Control Center', 'Panel pintasan cepat sistem (segera hadir).');
 }
