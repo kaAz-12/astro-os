@@ -299,6 +299,7 @@ function initBattery() {
         const level = Math.round(battery.level * 100);
         document.getElementById('statusText').textContent = `${level}%`;
         document.getElementById('batteryLevel').style.width = `${level}%`;
+        <span id="chargingIcon" style="display: none;">⚡</span>
       }
       updateBattery();
       battery.addEventListener('levelchange', updateBattery);
