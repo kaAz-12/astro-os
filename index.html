@@ -251,6 +251,7 @@ main{
 </div>
 
 <script>
+// Data Aplikasi
 const apps = [
   ['⚙️', 'Pengaturan', 'Pengaturan sistem Astra OS.'],
   ['🗂️', 'Berkas', 'Manajer file lokal.'],
@@ -262,14 +263,14 @@ const apps = [
   ['🌐', 'Browser', 'Peramban web.']
 ];
 
-// Render Apps
+// Render Apps ke Layar Utama & Dock
 const appsGrid = document.getElementById('appsGrid');
 const dockGrid = document.getElementById('dockGrid');
 
 apps.forEach(app => {
   const btn = document.createElement('button');
   btn.className = 'app-item';
-  btn.onclick = () => openModal(app[1], app[2]);
+  btn.onclick = () => openModal(app[1], app[2]); // Memanggil openModal
   btn.innerHTML = `<div class="icon-box">${app[0]}</div><span>${app[1]}</span>`;
   appsGrid.appendChild(btn);
 });
@@ -277,16 +278,17 @@ apps.forEach(app => {
 apps.slice(0, 4).forEach(app => {
   const btn = document.createElement('button');
   btn.className = 'app-item';
-  btn.onclick = () => openModal(app[1], app[2]);
+  btn.onclick = () => openModal(app[1], app[2]); // Memanggil openModal
   btn.innerHTML = `<div class="icon-box">${app[0]}</div>`;
   dockGrid.appendChild(btn);
 });
-  // --- 1. Fungsi Buka Aplikasi (Sudah Diperbarui untuk Kalkulator) ---
-function openApp(name, desc) {
+
+// --- FUNGSI UTAMA: openModal (Menangani Kalkulator & Aplikasi Lain) ---
+function openModal(name, desc) {
   document.getElementById('modalTitle').textContent = name;
   const modalDesc = document.getElementById('modalDesc');
   
-  // Cek kalau yang diklik adalah aplikasi Kalkulator
+  // Kalau yang diklik Kalkulator, munculkan tombol kalkulator
   if (name === 'Kalkulator') {
     modalDesc.innerHTML = `
       <input type="text" class="calc-screen" id="calcScreen" value="0" readonly>
@@ -317,11 +319,11 @@ function openApp(name, desc) {
       </div>
     `;
   } else {
-    // Kalau buka aplikasi lain, tetap pakai teks deskripsi biasa
+    // Kalau aplikasi lain (Galeri, Musik, dll), tetap tampilkan teks deskripsinya
     modalDesc.textContent = desc;
   }
   
-  // Munculkan kotaknya
+  // Munculkan kotaknya (modal)
   document.getElementById('appModal').classList.add('show');
 }
 
@@ -329,7 +331,7 @@ function closeModal() {
   document.getElementById('appModal').classList.remove('show');
 }
 
-// --- 2. Otak Kalkulator ---
+// --- OTAK KALKULATOR ---
 let calcExpression = "0";
 
 function calcAppend(val) {
@@ -358,7 +360,6 @@ function calcCalculate() {
     calcExpression = "0";
   }
 }
-
 // Update Waktu & Tanggal Berdasarkan Lokasi Perangkat
 function updateDateTime() {
   const now = new Date();
@@ -406,72 +407,6 @@ function closeModal() {
   function openApp(name, desc) {
   document.getElementById('modalTitle').textContent = name;
   const modalDesc = document.getElementById('modalDesc');
-  
-  // Cek: Kalau yang diklik aplikasi Kalkulator
-  if (name === 'Kalkulator') {
-    modalDesc.innerHTML = `
-      <input type="text" class="calc-screen" id="calcScreen" value="0" readonly>
-      <div class="calc-grid">
-        <button class="calc-btn" onclick="calcClear()">C</button>
-        <button class="calc-btn" onclick="calcAppend('(')">(</button>
-        <button class="calc-btn" onclick="calcAppend(')')">)</button>
-        <button class="calc-btn op" onclick="calcAppend('/')">÷</button>
-        
-        <button class="calc-btn" onclick="calcAppend('7')">7</button>
-        <button class="calc-btn" onclick="calcAppend('8')">8</button>
-        <button class="calc-btn" onclick="calcAppend('9')">9</button>
-        <button class="calc-btn op" onclick="calcAppend('*')">×</button>
-        
-        <button class="calc-btn" onclick="calcAppend('4')">4</button>
-        <button class="calc-btn" onclick="calcAppend('5')">5</button>
-        <button class="calc-btn" onclick="calcAppend('6')">6</button>
-        <button class="calc-btn op" onclick="calcAppend('-')">-</button>
-        
-        <button class="calc-btn" onclick="calcAppend('1')">1</button>
-        <button class="calc-btn" onclick="calcAppend('2')">2</button>
-        <button class="calc-btn" onclick="calcAppend('3')">3</button>
-        <button class="calc-btn op" onclick="calcAppend('+')">+</button>
-        
-        <button class="calc-btn" onclick="calcAppend('0')" style="grid-column: span 2">0</button>
-        <button class="calc-btn" onclick="calcAppend('.')">.</button>
-        <button class="calc-btn op" onclick="calcCalculate()">=</button>
-      </div>
-    `;
-  } else {
-    // Kalau buka aplikasi lain, tetap pakai teks biasa
-    modalDesc.textContent = desc;
-  }
-  
-  document.getElementById('appModal').classList.add('show');
-}
-  // --- Otak Kalkulator ---
-let calcExpression = "0";
-
-function calcAppend(val) {
-  const screen = document.getElementById('calcScreen');
-  if (calcExpression === "0" && val !== '.') {
-    calcExpression = val;
-  } else {
-    calcExpression += val;
-  }
-  screen.value = calcExpression;
-}
-
-function calcClear() {
-  calcExpression = "0";
-  document.getElementById('calcScreen').value = calcExpression;
-}
-
-function calcCalculate() {
-  const screen = document.getElementById('calcScreen');
-  try {
-    let result = eval(calcExpression.replace('×', '*').replace('÷', '/'));
-    screen.value = result;
-    calcExpression = result.toString();
-  } catch (error) {
-    screen.value = "Error";
-    calcExpression = "0";
-  }
 }
 </script>
 </body>
