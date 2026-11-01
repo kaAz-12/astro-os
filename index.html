@@ -179,7 +179,8 @@ main{
   font-size:16px;
   cursor:pointer;
 }
-  /* Gaya untuk Kalkulator */
+
+/* Gaya untuk Kalkulator */
 .calc-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -270,7 +271,7 @@ const dockGrid = document.getElementById('dockGrid');
 apps.forEach(app => {
   const btn = document.createElement('button');
   btn.className = 'app-item';
-  btn.onclick = () => openModal(app[1], app[2]); // Memanggil openModal
+  btn.onclick = () => openModal(app[1], app[2]);
   btn.innerHTML = `<div class="icon-box">${app[0]}</div><span>${app[1]}</span>`;
   appsGrid.appendChild(btn);
 });
@@ -278,7 +279,7 @@ apps.forEach(app => {
 apps.slice(0, 4).forEach(app => {
   const btn = document.createElement('button');
   btn.className = 'app-item';
-  btn.onclick = () => openModal(app[1], app[2]); // Memanggil openModal
+  btn.onclick = () => openModal(app[1], app[2]);
   btn.innerHTML = `<div class="icon-box">${app[0]}</div>`;
   dockGrid.appendChild(btn);
 });
@@ -360,6 +361,7 @@ function calcCalculate() {
     calcExpression = "0";
   }
 }
+
 // Update Waktu & Tanggal Berdasarkan Lokasi Perangkat
 function updateDateTime() {
   const now = new Date();
@@ -394,20 +396,6 @@ function initBattery() {
   }
 }
 initBattery();
-
-// Modal Handlers
-function openModal(title, desc) {
-  document.getElementById('modalTitle').textContent = title;
-  document.getElementById('modalDesc').textContent = desc;
-  document.getElementById('appModal').classList.add('show');
-}
-function closeModal() {
-  document.getElementById('appModal').classList.remove('show');
-}
-  function openApp(name, desc) {
-  document.getElementById('modalTitle').textContent = name;
-  const modalDesc = document.getElementById('modalDesc');
-}
 </script>
 </body>
 </html>
